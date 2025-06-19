@@ -1,0 +1,913 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Oak Sapling - GreenGrow</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        /* Header */
+        header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            padding: 1rem 0;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #2d7d32;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            color: #2d7d32;
+        }
+
+        .nav-links a::after {
+            content: "";
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: #2d7d32;
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-icon, .cart-icon {
+            background: #2d7d32;
+            color: white;
+            border: none;
+            padding: 0.75rem;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: transform 0.3s ease;
+            position: relative;
+        }
+
+        .user-icon:hover, .cart-icon:hover {
+            transform: scale(1.1);
+        }
+
+        .cart-count {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #ff4444;
+            color: white;
+            font-size: 0.8rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 50%;
+            min-width: 20px;
+            text-align: center;
+        }
+
+        /* Breadcrumb */
+        .breadcrumb {
+            background: #f8f9fa;
+            padding: 6rem 2rem 1rem;
+            margin-top: 80px;
+        }
+
+        .breadcrumb-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .breadcrumb-nav {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .breadcrumb-nav a {
+            color: #2d7d32;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .breadcrumb-nav a:hover {
+            color: #1b5e20;
+        }
+
+        /* Product Page */
+        .product-page {
+            padding: 2rem 2rem 5rem;
+            background: white;
+        }
+
+        .product-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            margin-bottom: 4rem;
+        }
+
+        .product-gallery {
+            position: relative;
+        }
+
+        .main-image {
+            width: 100%;
+            height: 500px;
+            background: linear-gradient(45deg, #81c784, #4caf50);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 8rem;
+            color: white;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .main-image::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M50 10 L60 30 L50 50 L40 30 Z" fill="rgba(255,255,255,0.1)"/><circle cx="30" cy="70" r="3" fill="rgba(255,255,255,0.1)"/><circle cx="70" cy="20" r="2" fill="rgba(255,255,255,0.1)"/></svg>');
+            animation: gentle-float 6s infinite ease-in-out;
+        }
+
+        @keyframes gentle-float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .thumbnail-gallery {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .thumbnail {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(45deg, #a5d6a7, #81c784);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 3px solid transparent;
+        }
+
+        .thumbnail:hover, .thumbnail.active {
+            border-color: #2d7d32;
+            transform: scale(1.05);
+        }
+
+        .product-info {
+            padding: 2rem 0;
+        }
+
+        .product-title {
+            font-size: 2.5rem;
+            color: #2d7d32;
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+
+        .product-rating {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .stars {
+            color: #ffd700;
+            font-size: 1.2rem;
+        }
+
+        .rating-text {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .product-price {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .current-price {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #2d7d32;
+        }
+
+        .original-price {
+            font-size: 1.5rem;
+            color: #999;
+            text-decoration: line-through;
+        }
+
+        .discount-badge {
+            background: #ff4444;
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .product-description {
+            margin: 2rem 0;
+            line-height: 1.8;
+            color: #555;
+        }
+
+        .product-features {
+            margin: 2rem 0;
+        }
+
+        .product-features h3 {
+            color: #2d7d32;
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+        }
+
+        .features-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 0.5rem;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 0;
+        }
+
+        .feature-icon {
+            color: #2d7d32;
+            font-size: 1.1rem;
+        }
+
+        .purchase-options {
+            margin: 2rem 0;
+            padding: 2rem;
+            background: #f8f9fa;
+            border-radius: 15px;
+            border: 2px solid #e9ecef;
+        }
+
+        .option-tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .option-tab {
+            padding: 0.8rem 1.5rem;
+            border: 2px solid #e9ecef;
+            background: white;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .option-tab.active {
+            background: #2d7d32;
+            color: white;
+            border-color: #2d7d32;
+        }
+
+        .option-content {
+            display: none;
+        }
+
+        .option-content.active {
+            display: block;
+        }
+
+        .option-details {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-bottom: 1.5rem;
+        }
+
+        .option-price {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #2d7d32;
+            margin-bottom: 0.5rem;
+        }
+
+        .option-description {
+            color: #666;
+            margin-bottom: 1rem;
+        }
+
+        .quantity-selector {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .quantity-label {
+            font-weight: 500;
+        }
+
+        .quantity-controls {
+            display: flex;
+            align-items: center;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .quantity-btn {
+            background: #f8f9fa;
+            border: none;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            font-size: 1.2rem;
+        }
+
+        .quantity-btn:hover {
+            background: #e9ecef;
+        }
+
+        .quantity-input {
+            border: none;
+            padding: 0.5rem;
+            width: 60px;
+            text-align: center;
+            font-size: 1rem;
+        }
+
+        .add-to-cart-btn {
+            width: 100%;
+            padding: 1rem 2rem;
+            background: linear-gradient(45deg, #2d7d32, #4caf50);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .add-to-cart-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .secondary-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .wishlist-btn, .share-btn {
+            flex: 1;
+            padding: 0.75rem;
+            background: white;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .wishlist-btn:hover, .share-btn:hover {
+            border-color: #2d7d32;
+            color: #2d7d32;
+        }
+
+        /* Care Guidelines Section */
+        .care-guidelines {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 0;
+        }
+
+        .care-title {
+            font-size: 2.5rem;
+            color: #2d7d32;
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .care-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .care-tab {
+            padding: 0.8rem 1.5rem;
+            background: white;
+            border: 2px solid #e9ecef;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .care-tab.active {
+            background: #2d7d32;
+            color: white;
+            border-color: #2d7d32;
+        }
+
+        .care-content {
+            display: none;
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .care-content.active {
+            display: block;
+            animation: fadeInUp 0.5s ease;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .care-section {
+            margin-bottom: 2rem;
+        }
+
+        .care-section h3 {
+            color: #2d7d32;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .care-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .care-card {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 15px;
+            border-left: 4px solid #2d7d32;
+        }
+
+        .care-card h4 {
+            color: #2d7d32;
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        .care-card p {
+            color: #555;
+            line-height: 1.6;
+        }
+
+        .tips-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .tips-list li {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
+        }
+
+        .tips-list li:last-child {
+            border-bottom: none;
+        }
+
+        .tips-list li::before {
+            content: "✓";
+            color: #2d7d32;
+            font-weight: bold;
+            margin-top: 0.1rem;
+        }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .product-container {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .main-image {
+                height: 300px;
+                font-size: 5rem;
+            }
+
+            .product-title {
+                font-size: 2rem;
+            }
+
+            .current-price {
+                font-size: 2rem;
+            }
+
+            .care-tabs {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .care-tab {
+                width: 100%;
+                max-width: 300px;
+                text-align: center;
+            }
+
+            .care-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .secondary-actions {
+                flex-direction: column;
+            }
+
+            .quantity-selector {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+        }
+
+        /* Animations */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s ease;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Add styling for product-img-detail */
+        .product-img-detail {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 20px;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="#" class="logo">🌱 GreenGrow</a>
+            <ul class="nav-links">
+                <li><a href="index.html#home">Home</a></li>
+                <li><a href="index.html#features">About</a></li>
+                <li><a href="product.html">Products</a></li>
+                <li><a href="index.html#contact">Contact</a></li>
+                <li><a href="login.html">Login</a></li>
+            </ul>
+            <div class="nav-actions">
+                <button class="user-icon" title="Sign In">👤</button>
+                <button class="cart-icon" title="Shopping Cart">
+                    🛒
+                    <span class="cart-count" id="cart-count">0</span>
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <div class="breadcrumb">
+        <div class="breadcrumb-container">
+            <div class="breadcrumb-nav">
+                <a href="#">Home</a> > <a href="#">Products</a> > <a href="#">Trees</a> > <span>Premium Oak Sapling</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="product-page">
+        <div class="product-container">
+            <div class="product-gallery">
+                <div class="main-image" id="mainImage"><img src="images/oak.png" alt="Premium Oak Sapling" class="product-img-detail"></div>
+                <div class="thumbnail-gallery">
+                    <div class="thumbnail active" onclick="changeImage('🌳')">🌳</div>
+                    <div class="thumbnail" onclick="changeImage('🌿')">🌿</div>
+                    <div class="thumbnail" onclick="changeImage('🍃')">🍃</div>
+                    <div class="thumbnail" onclick="changeImage('🌱')">🌱</div>
+                </div>
+            </div>
+
+            <div class="product-info">
+                <h1 class="product-title">Premium Oak Sapling</h1>
+                
+                <div class="product-rating">
+                    <div class="stars">★★★★★</div>
+                    <span class="rating-text">(4.8/5 based on 127 reviews)</span>
+                </div>
+
+                <div class="product-price">
+                    <span class="current-price">₹2,099</span>
+                    <span class="original-price">₹2,499</span>
+                    <span class="discount-badge">16% OFF</span>
+                </div>
+
+                <div class="product-description">
+                    <p>Experience the majesty of nature with our Premium Oak Sapling. This magnificent tree is perfect for creating lasting memories and adding substantial value to your property. Hand-selected from certified nurseries, each sapling is guaranteed to be healthy and ready for planting.</p>
+                </div>
+
+                <div class="product-features">
+                    <h3>Key Features</h3>
+                    <div class="features-list">
+                        <div class="feature-item">
+                            <span class="feature-icon">🌿</span>
+                            <span>2-3 years old sapling</span>
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-icon">📏</span>
+                            <span>Height: 4-5 feet</span>
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-icon">🌱</span>
+                            <span>Healthy root system</span>
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-icon">🏠</span>
+                            <span>Perfect for landscaping</span>
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-icon">💪</span>
+                            <span>Weather resistant</span>
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-icon">🎯</span>
+                            <span>95% survival rate</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="purchase-options">
+                    <div class="option-tabs">
+                        <div class="option-tab active" onclick="switchOption('buy')">Buy</div>
+                        <div class="option-tab" onclick="switchOption('rent')">Rent</div>
+                    </div>
+
+                    <div class="option-content active" id="buy-option">
+                        <div class="option-details">
+                            <div class="option-price">₹2,099</div>
+                            <div class="option-description">
+                                Own this beautiful oak sapling forever. Perfect for permanent landscaping and long-term investment.
+                            </div>
+                            <ul class="tips-list">
+                                <li>Free delivery within 3-5 days</li>
+                                <li>1-year growth guarantee</li>
+                                <li>Free planting consultation</li>
+                                <li>Lifetime care support</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="option-content" id="rent-option">
+                        <div class="option-details">
+                            <div class="option-price">₹299/month</div>
+                            <div class="option-description">
+                                Rent this oak sapling for events, temporary landscaping, or to test your garden space.
+                            </div>
+                            <ul class="tips-list">
+                                <li>Minimum rental period: 3 months</li>
+                                <li>Free weekly maintenance visits</li>
+                                <li>Option to purchase anytime</li>
+                                <li>Replacement guarantee</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="quantity-selector">
+                        <span class="quantity-label">Quantity:</span>
+                        <div class="quantity-controls">
+                            <button class="quantity-btn" onclick="decreaseQuantity()">-</button>
+                            <input type="number" class="quantity-input" value="1" min="1" id="quantity">
+                            <button class="quantity-btn" onclick="increaseQuantity()">+</button>
+                        </div>
+                    </div>
+
+                    <button class="add-to-cart-btn" onclick="addToCart()">
+                        Add to Cart - ₹<span id="total-price">2,099</span>
+                    </button>
+
+                    <div class="secondary-actions">
+                        <button class="wishlist-btn">💝 Add to Wishlist</button>
+                        <button class="share-btn">📤 Share Product</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="care-guidelines">
+            <h2 class="care-title">Plant Care Guidelines</h2>
+            
+            <div class="care-tabs">
+                <div class="care-tab active" onclick="switchCareTab('planting')">🌱 Planting</div>
+                <div class="care-tab" onclick="switchCareTab('watering')">💧 Watering</div>
+                <div class="care-tab" onclick="switchCareTab('sunlight')">☀️ Sunlight</div>
+                <div class="care-tab" onclick="switchCareTab('fertilizing')">🌿 Fertilizing</div>
+                <div class="care-tab" onclick="switchCareTab('pruning')">✂️ Pruning</div>
+                <div class="care-tab" onclick="switchCareTab('seasonal')">🗓️ Seasonal Care</div>
+            </div>
+
+            <div class="care-content active" id="planting-care">
+                <div class="care-section">
+                    <h3>🌱 Planting Your Oak Sapling</h3>
+                    <div class="care-grid">
+                        <div class="care-card">
+                            <h4>Location Selection</h4>
+                            <p>Choose a location with well-draining soil and plenty of space for growth. Oak trees need at least 20 feet of clearance from buildings and other trees.</p>
+                        </div>
+                        <div class="care-card">
+                            <h4>Soil Preparation</h4>
+                            <p>Dig a hole twice as wide as the root ball and as deep as the container. Mix native soil with compost for better drainage and nutrition.</p>
+                        </div>
+                        <div class="care-card">
+                            <h4>Planting Process</h4>
+                            <p>Gently remove the sapling from its container, loosen the roots, and place in the hole. Backfill with soil mixture and water thoroughly.</p>
+                        </div>
+                        <div class="care-card">
+                            <h4>Initial Care</h4>
+                            <p>Stake the sapling if necessary and apply a 2-3 inch layer of mulch around the base, keeping it away from the trunk.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="care-content" id="watering-care">
+                <div class="care-section">
+                    <h3>💧 Watering Guidelines</h3>
+                    <div class="care-grid">
+                        <div class="care-card">
+                            <h4>Frequency</h4>
+                            <p>Water deeply once or twice a week during the first year. Established trees need less frequent but deeper watering.</p>
+                        </div>
+                        <div class="care-card">
+                            <h4>Amount</h4>
+                            <p>Provide 1-2 gallons of water per week for young saplings. Increase as the tree grows and during hot weather.</p>
+                        </div>
+                        <div class="care-card">
+                            <h4>Timing</h4>
+                            <p>Water early morning or late evening to reduce evaporation. Avoid watering during the hottest part of the day.</p>
+                        </div>
+                        <div class="care-card">
+                            <h4>Signs of Stress</h4>
+                            <p>Watch for wilting, yellowing leaves, or dropping leaves as signs of over or under-watering.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="care-content" id="sunlight-care">
+                <div class="care-section">
+                    <h3>☀️ Sunlight Requirements</h3>
+                    <div class="care-grid">
+                        <div class="care-card">
+                            <h4>Light Needs</h4>
+                            <p>Oak trees thrive in full sunlight, requiring at least 6-8 hours of direct sunlight daily for optimal growth.</p>
+                        </div>
+                        <div class="care-card">
+                            <h4>Shade Tolerance</h4>
+                            <p>Young saplings can tolerate partial shade but will grow more slowly. Mature oaks need full sun exposure.</p>
+                        </div>
+                        <div class="care-card">
+                            <h4>Seasonal Variations</h4>
+                            <p>Monitor light exposure throughout seasons as surrounding vegetation grows and changes.</p>
+                        </div>
+                        <div class="care-card">
+                            <h4>Protection</h4>
+                            <p>Protect young saplings from harsh afternoon sun in extremely hot climates with temporary shade cloth.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="care-content" id="fertilizing-care">
+                <div class="care-section">
+                    <h3>🌿 Fertilizing Schedule</h3>
+                    <div class="care-grid">
+                        <div class="care-card">
+                            <h4>First Year</h4>
+                            <p>Apply balanced fertilizer (10-10-10) in early spring and mid-summer. Use half the recommended amount for young trees.</p>
+                        </div>
+                        <div class="care-card">
+                            <h4>Established Trees</h4>
+                            <p>Fertilize annually in early spring with slow-release fertilizer. Mature oaks typically need minimal fertilization.</p>
+                        </div>
+                        <div class="care-card">
+                            <h4>Organic Options</h4>
+                            <p>Use compost, well-aged manure, or organic fertilizers. Apply a 2-3 inch layer around the base annually.</p>
+                        </div>
+                        <div class="care-card">
+                            <h4>Soil Testing</h4>
+                            <p>Test soil pH every 2-3 years. Oaks prefer slightly acidic to neutral soil (pH 6.0-7.0).</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="care-content" id="pruning-care">
+                <div class="care-section">
+                    <h3>✂️ Pruning Guidelines</h3>
+                    <div class="care-grid">
+                        <div class="care-card">
+                            <h4>Best Time</h4>
+                            <p>Prune during dormant season (late winter/early spring) to minimize stress and disease risk.</p>
+                        </div>
+                        <div class="care-card">
+                            <h4>Young Trees</h4>
+                            <p>Focus on establishing strong structure.

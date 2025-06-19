@@ -18,6 +18,64 @@
         overflow-x: hidden;
       }
 
+      /* Loading Screen */
+      .loading-screen {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100vh;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+        transition: opacity 0.5s ease;
+      }
+
+      .loading-screen.hidden {
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      .loader {
+        width: 60px;
+        height: 60px;
+        border: 4px solid rgba(255, 255, 255, 0.3);
+        border-top: 4px solid #ffffff;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin-bottom: 20px;
+      }
+
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+
+      .loading-text {
+        color: white;
+        font-size: 1.2rem;
+        animation: pulse 1.5s ease-in-out infinite;
+      }
+
+      @keyframes pulse {
+        0%, 100% { opacity: 0.7; }
+        50% { opacity: 1; }
+      }
+
+      .growing-plant {
+        font-size: 2rem;
+        animation: grow 2s ease-in-out infinite;
+        margin-bottom: 10px;
+      }
+
+      @keyframes grow {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.2); }
+      }
+
       /* Header */
       header {
         position: fixed;
@@ -341,21 +399,60 @@
         margin: 1rem 0;
       }
 
-      .add-to-cart {
-        width: 100%;
-        background: #2d7d32;
-        color: white;
+      .product-actions {
+        display: flex;
+        gap: 0.5rem;
+        margin-top: 1rem;
+      }
+
+      .buy-btn, .rent-btn {
+        flex: 1;
         border: none;
         padding: 0.75rem;
         border-radius: 10px;
         cursor: pointer;
         font-size: 1rem;
         transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
       }
 
-      .add-to-cart:hover {
+      .buy-btn {
+        background: #2d7d32;
+        color: white;
+      }
+
+      .buy-btn:hover {
         background: #1b5e20;
-        transform: translateY(-1px);
+        transform: translateY(-2px);
+      }
+
+      .rent-btn {
+        background: #ff9800;
+        color: white;
+      }
+
+      .rent-btn:hover {
+        background: #f57c00;
+        transform: translateY(-2px);
+      }
+
+      .buy-btn::before, .rent-btn::before {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        background: rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+        transition: width 0.3s, height 0.3s;
+      }
+
+      .buy-btn:active::before, .rent-btn:active::before {
+        width: 300px;
+        height: 300px;
       }
 
       /* Footer */
@@ -412,6 +509,10 @@
         .features-grid,
         .products-grid {
           grid-template-columns: 1fr;
+        }
+
+        .product-actions {
+          flex-direction: column;
         }
       }
 
@@ -505,15 +606,58 @@
       .checkout-btn:hover {
         background: #1b5e20;
       }
+
+      .rent-period {
+        font-size: 0.9rem;
+        color: #666;
+        margin-top: 0.2rem;
+      }
+
+      /* Add styling for details-btn */
+      .details-btn {
+        flex: 1;
+        border: none;
+        padding: 0.75rem;
+        border-radius: 10px;
+        background: #e9ecef;
+        color: #2d7d32;
+        font-size: 1rem;
+        font-weight: 500;
+        text-align: center;
+        text-decoration: none;
+        margin-top: 0.5rem;
+        transition: background 0.3s, color 0.3s;
+        display: inline-block;
+      }
+      .details-btn:hover {
+        background: #2d7d32;
+        color: #fff;
+      }
+
+      /* Add styling for product-img */
+      .product-img {
+        width: 100%;
+        height: 250px;
+        object-fit: cover;
+        border-radius: 20px 20px 0 0;
+        display: block;
+      }
     </style>
   </head>
   <body>
+    <!-- Loading Screen -->
+    <div class="loading-screen" id="loadingScreen">
+      <div class="growing-plant">🌱</div>
+      <div class="loader"></div>
+      <div class="loading-text">Growing your garden...</div>
+    </div>
+
     <div class="cart-overlay" onclick="toggleCart()"></div>
     <div class="cart-sidebar">
       <button class="close-cart" onclick="toggleCart()">&times;</button>
       <h2>Shopping Cart</h2>
       <div id="cart-items"></div>
-      <div class="cart-total">Total: $<span id="cart-total">0.00</span></div>
+      <div class="cart-total">Total: ₹<span id="cart-total">0.00</span></div>
       <button class="checkout-btn" onclick="checkout()">
         Proceed to Checkout
       </button>
@@ -523,10 +667,11 @@
       <nav>
         <a href="#" class="logo">🌱 GreenGrow</a>
         <ul class="nav-links">
-          <li><a href="#home">Home</a></li>
-          <li><a href="#features">About</a></li>
-          <li><a href="#products">Products</a></li>
-          <li><a href="#contact">Contact</a></li>
+          <li><a href="index.html#home">Home</a></li>
+          <li><a href="index.html#features">About</a></li>
+          <li><a href="product.html">Products</a></li>
+          <li><a href="index.html#contact">Contact</a></li>
+          <li><a href="login.html">Login</a></li>
         </ul>
         <button class="cart-icon" onclick="toggleCart()">
           🛒
@@ -590,76 +735,88 @@
       <div class="products-container">
         <h2 class="section-title fade-in">Our Products</h2>
         <div class="products-grid">
-          <div
-            class="product-card fade-in"
-            onclick="addToCart('Oak Sapling', 24.99)"
-          >
-            <div class="product-image">🌳</div>
+          <div class="product-card fade-in">
+            <div class="product-image"><img src="images/oak.png" alt="Premium Oak Sapling" class="product-img"></div>
             <div class="product-info">
               <h3>Premium Oak Sapling</h3>
               <p>Strong, majestic oak tree perfect for landscaping</p>
-              <div class="product-price">$24.99</div>
-              <button class="add-to-cart">Add to Cart</button>
+              <div class="product-price">₹2,099</div>
+              <div class="rent-period">Rent: ₹299/month</div>
+              <div class="product-actions">
+                <button class="buy-btn" onclick="addToCart('Oak Sapling', 2099, 'buy')">Buy Now</button>
+                <button class="rent-btn" onclick="addToCart('Oak Sapling', 299, 'rent')">Rent</button>
+                <a href="product.html" class="details-btn">Product Details</a>
+              </div>
             </div>
           </div>
-          <div
-            class="product-card fade-in"
-            onclick="addToCart('Cherry Blossom', 32.99)"
-          >
-            <div class="product-image">🌸</div>
+          <div class="product-card fade-in">
+            <div class="product-image"><img src="images/CherryBlossom.png" alt="Cherry Blossom Tree" class="product-img"></div>
             <div class="product-info">
               <h3>Cherry Blossom Tree</h3>
               <p>Beautiful flowering tree that blooms in spring</p>
-              <div class="product-price">$32.99</div>
-              <button class="add-to-cart">Add to Cart</button>
+              <div class="product-price">₹2,799</div>
+              <div class="rent-period">Rent: ₹399/month</div>
+              <div class="product-actions">
+                <button class="buy-btn" onclick="addToCart('Cherry Blossom', 2799, 'buy')">Buy Now</button>
+                <button class="rent-btn" onclick="addToCart('Cherry Blossom', 399, 'rent')">Rent</button>
+                <a href="product.html" class="details-btn">Product Details</a>
+              </div>
             </div>
           </div>
-          <div
-            class="product-card fade-in"
-            onclick="addToCart('Pine Sapling', 18.99)"
-          >
-            <div class="product-image">🌲</div>
+          <div class="product-card fade-in">
+            <div class="product-image"><img src="images/pine.png" alt="Evergreen Pine" class="product-img"></div>
             <div class="product-info">
               <h3>Evergreen Pine</h3>
               <p>Hardy evergreen perfect for year-round beauty</p>
-              <div class="product-price">$18.99</div>
-              <button class="add-to-cart">Add to Cart</button>
+              <div class="product-price">₹1,599</div>
+              <div class="rent-period">Rent: ₹249/month</div>
+              <div class="product-actions">
+                <button class="buy-btn" onclick="addToCart('Pine Sapling', 1599, 'buy')">Buy Now</button>
+                <button class="rent-btn" onclick="addToCart('Pine Sapling', 249, 'rent')">Rent</button>
+                <a href="product.html" class="details-btn">Product Details</a>
+              </div>
             </div>
           </div>
-          <div
-            class="product-card fade-in"
-            onclick="addToCart('Fruit Tree Kit', 45.99)"
-          >
-            <div class="product-image">🍎</div>
+          <div class="product-card fade-in">
+            <div class="product-image"><img src="images/StarterKit.png" alt="Fruit Tree Starter Kit" class="product-img"></div>
             <div class="product-info">
               <h3>Fruit Tree Starter Kit</h3>
               <p>Apple, pear, and peach saplings with care guide</p>
-              <div class="product-price">$45.99</div>
-              <button class="add-to-cart">Add to Cart</button>
+              <div class="product-price">₹3,899</div>
+              <div class="rent-period">Rent: ₹599/month</div>
+              <div class="product-actions">
+                <button class="buy-btn" onclick="addToCart('Fruit Tree Kit', 3899, 'buy')">Buy Now</button>
+                <button class="rent-btn" onclick="addToCart('Fruit Tree Kit', 599, 'rent')">Rent</button>
+                <a href="product.html" class="details-btn">Product Details</a>
+              </div>
             </div>
           </div>
-          <div
-            class="product-card fade-in"
-            onclick="addToCart('Garden Tool Set', 89.99)"
-          >
-            <div class="product-image">🛠️</div>
+          <div class="product-card fade-in">
+            <div class="product-image"><img src="images/tools.png" alt="Professional Garden Tools" class="product-img"></div>
             <div class="product-info">
               <h3>Professional Garden Tools</h3>
               <p>Complete set of high-quality gardening tools</p>
-              <div class="product-price">$89.99</div>
-              <button class="add-to-cart">Add to Cart</button>
+              <div class="product-price">₹7,649</div>
+              <div class="rent-period">Rent: ₹999/month</div>
+              <div class="product-actions">
+                <button class="buy-btn" onclick="addToCart('Garden Tool Set', 7649, 'buy')">Buy Now</button>
+                <button class="rent-btn" onclick="addToCart('Garden Tool Set', 999, 'rent')">Rent</button>
+                <a href="product.html" class="details-btn">Product Details</a>
+              </div>
             </div>
           </div>
-          <div
-            class="product-card fade-in"
-            onclick="addToCart('Organic Soil Mix', 15.99)"
-          >
-            <div class="product-image">🌱</div>
+          <div class="product-card fade-in">
+            <div class="product-image"><img src="images/soil.png" alt="Premium Soil Mix" class="product-img"></div>
             <div class="product-info">
               <h3>Premium Soil Mix</h3>
               <p>Nutrient-rich organic soil perfect for planting</p>
-              <div class="product-price">$15.99</div>
-              <button class="add-to-cart">Add to Cart</button>
+              <div class="product-price">₹1,359</div>
+              <div class="rent-period">Not available for rent</div>
+              <div class="product-actions">
+                <button class="buy-btn" onclick="addToCart('Organic Soil Mix', 1359, 'buy')">Buy Now</button>
+                <button class="rent-btn" disabled style="opacity: 0.5; cursor: not-allowed;">N/A</button>
+                <a href="product.html" class="details-btn">Product Details</a>
+              </div>
             </div>
           </div>
         </div>
@@ -691,20 +848,31 @@
     </footer>
 
     <script>
+      // Loading screen
+      window.addEventListener('load', function() {
+        setTimeout(() => {
+          document.getElementById('loadingScreen').classList.add('hidden');
+        }, 2000);
+      });
+
       // Cart functionality
       let cart = [];
       let cartTotal = 0;
 
-      function addToCart(name, price) {
-        cart.push({ name, price });
+      function addToCart(name, price, type) {
+        const itemType = type === 'rent' ? 'Rent' : 'Buy';
+        const displayName = `${name} (${itemType})`;
+        cart.push({ name: displayName, price, type });
         updateCartDisplay();
 
         // Show a brief animation
         const cartIcon = document.querySelector(".cart-icon");
-        cartIcon.style.transform = "scale(1.2)";
+        cartIcon.style.transform = "scale(1.3)";
+        cartIcon.style.background = type === 'rent' ? '#ff9800' : '#2d7d32';
         setTimeout(() => {
           cartIcon.style.transform = "scale(1)";
-        }, 200);
+          cartIcon.style.background = '#2d7d32';
+        }, 300);
       }
 
       function updateCartDisplay() {
@@ -721,7 +889,7 @@
             (item, index) => `
                 <div class="cart-item">
                     <span>${item.name}</span>
-                    <span>$${item.price.toFixed(2)}</span>
+                    <span>₹${item.price.toFixed(2)}</span>
                     <button onclick="removeFromCart(${index})" style="background: #ff4444; color: white; border: none; padding: 0.25rem 0.5rem; border-radius: 5px; cursor: pointer;">Remove</button>
                 </div>
             `
@@ -747,7 +915,7 @@
           return;
         }
         alert(
-          `Thank you for your order! Total: $${cartTotal.toFixed(
+          `Thank you for your order! Total: ₹${cartTotal.toFixed(
             2
           )}\nWe'll process your order shortly.`
         );
